@@ -75,9 +75,9 @@ yarn test --match='*foo'
 **build:**
 
 ```bash
-git clone https://github.com/bynaki/ts-webapi.boilerplate.git
-cd ts-webapi.boilerplate/rpi-docker
-docker build -t bynaki/ts-webapi.boilerplate .
+git clone https://github.com/bynaki/ts-socket.io.server.git
+cd ts-socket.io.server/rpi-docker
+docker build -t bynaki/ts-socket.io.server .
 ```
 
 **run:**
@@ -91,7 +91,7 @@ npm run release
 # RELEASE_URL: 이 프로젝트의 release url
 docker run -p 3000:3000 --restart=on-failure:10 --env PORT=3000 \
 --env NODE_ENV=production --env RELEASE_URL=https://your.release.url \
---name ts-webapi.boilerplate -d bynaki/ts-webapi.boilerplate "npm start"
+--name ts-socket.io.server -d bynaki/ts-socket.io.server "npm start"
 
 # 업데이트
 # at project
@@ -99,7 +99,7 @@ npm run release
 .
 .
 # in platform
-docker restart ts-webapi.boilerplate
+docker restart ts-socket.io.server
 ```
 
 **run dev:**
@@ -112,7 +112,7 @@ npm run release
 # in platform
 docker run -it -p 8001:8001 \
 --env PORT=8001 --env RELEASE_URL=https://your.release.url \
---name ts-webapi.boilerplate.dev bynaki/ts-webapi.boilerplate "/bin/bash"
+--name ts-socket.io.server.dev bynaki/ts-socket.io.server "/bin/bash"
 .
 .
 # in docker

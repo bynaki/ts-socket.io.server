@@ -6,9 +6,9 @@ FROM hypriot/rpi-node
 
 # 정보
 LABEL maintainer="bynaki <bynaki@icloud.com>"
-LABEL title="ts-webapi.boilerplate"
+LABEL title="ts-socket.io.server"
 LABEL version="latest"
-LABEL description="https://github.com/bynaki/ts-webapi.boilerplate.git"
+LABEL description="https://github.com/bynaki/ts-socket.io.server.git"
 
 # 인프라 구성
 RUN ["bin/sh", "-c", "ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime"]

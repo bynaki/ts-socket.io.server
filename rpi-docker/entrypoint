@@ -1,7 +1,7 @@
 #!/bin/bash
 
 exec=$1
-proj="ts-webapi.boilerplate"
+proj="ts-socket.io.server"
 
 # 프로젝트 디렉토리가 있다면..
 if [ -d "/$proj" ]; then
