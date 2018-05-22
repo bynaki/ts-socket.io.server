@@ -13,16 +13,17 @@ import {
 import p from 'fourdollar.promisify'
 
 
-export async function copyAssets(src: string, dest: string) {
-  const files: string[] = await p<string[]>(glob)(src)
+export async function copyAssets(src: string, dest: string, ...exceptions: string[]) {
+  let files: string[] = glob.sync(src, {nodir: true, dot: true})
+  exceptions.forEach(except => {
+    const cs: string[] = glob.sync(except, {nodir: true, dot: true})
+    files = files.filter(f => cs.indexOf(f) === -1)
+  })
   files.forEach(s => {
-    const st = statSync(s)
-    if(st.isFile()) {
-      const d = join(dest, s.replace(/^[^\/]+/, ''))
-      if(!(existsSync(d) && statSync(d).mtimeMs === st.mtimeMs)) {
-        copySync(s, d)
-        console.log(`copied: ${s} > ${d}`)
-      }
+    const d = join(dest, s.replace(/^[^\/]+/, ''))
+    if(!(existsSync(d) && statSync(d).mtimeMs === statSync(s).mtimeMs)) {
+      copySync(s, d)
+      console.log(`copied: ${s} > ${d}`)
     }
   })
 }

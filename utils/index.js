@@ -38,41 +38,42 @@ exports.__esModule = true;
 var fs_extra_1 = require("fs-extra");
 var glob = require("glob");
 var path_1 = require("path");
-var fourdollar_promisify_1 = require("fourdollar.promisify");
 function copyAssets(src, dest) {
+    var exceptions = [];
+    for (var _i = 2; _i < arguments.length; _i++) {
+        exceptions[_i - 2] = arguments[_i];
+    }
     return __awaiter(this, void 0, void 0, function () {
         var files;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, fourdollar_promisify_1["default"](glob)(src)];
-                case 1:
-                    files = _a.sent();
-                    files.forEach(function (s) {
-                        var st = fs_extra_1.statSync(s);
-                        if (st.isFile()) {
-                            var d = path_1.join(dest, s.replace(/^[^\/]+/, ''));
-                            if (!(fs_extra_1.existsSync(d) && fs_extra_1.statSync(d).mtimeMs === st.mtimeMs)) {
-                                fs_extra_1.copySync(s, d);
-                                console.log("copied: " + s + " > " + d);
-                            }
-                        }
-                    });
-                    return [2 /*return*/];
-            }
+            files = glob.sync(src, { nodir: true, dot: true });
+            exceptions.forEach(function (except) {
+                var cs = glob.sync(except, { nodir: true, dot: true });
+                files = files.filter(function (f) { return cs.indexOf(f) === -1; });
+            });
+            files.forEach(function (s) {
+                var d = path_1.join(dest, s.replace(/^[^\/]+/, ''));
+                if (!(fs_extra_1.existsSync(d) && fs_extra_1.statSync(d).mtimeMs === fs_extra_1.statSync(s).mtimeMs)) {
+                    fs_extra_1.copySync(s, d);
+                    console.log("copied: " + s + " > " + d);
+                }
+            });
+            return [2 /*return*/];
         });
     });
 }
 exports.copyAssets = copyAssets;
+var releaseDir = '../../www/release';
 function release() {
     return __awaiter(this, void 0, void 0, function () {
         var packFile, pack;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, fs_extra_1.readFile(path_1.resolve(__dirname, '../package.json'))];
+                case 0: return [4 /*yield*/, fs_extra_1.readFile('package.json')];
                 case 1:
                     packFile = _a.sent();
                     pack = JSON.parse(packFile.toString());
-                    return [4 /*yield*/, fs_extra_1.copy('archive.tar.gz', path_1.join('/Users/naki/cloud/www/release/', pack.name))];
+                    return [4 /*yield*/, fs_extra_1.copy('archive.tar.gz', path_1.join(releaseDir, pack.name))];
                 case 2:
                     _a.sent();
                     return [2 /*return*/];
