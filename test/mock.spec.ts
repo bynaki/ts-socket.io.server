@@ -224,9 +224,13 @@ test('mock > error > in @On()', async t => {
   const socket = Socket('http://localhost:8110/mock', {
     path: '/test',
   })
-  const err: ErrorWithStatusCode = await t.throws(p(socket.emit, socket)(':ack', 'error'))
-  t.is(err.status, 500)
-  t.is(err.message, 'error')
+  try {
+    const res = await p(socket.emit, socket)(':ack', 'error')
+  } catch(e) {
+    const err = e as ErrorWithStatusCode
+    t.is(err.status, 500)
+    t.is(err.message, 'error')
+  }
   socket.close()
 })
 
@@ -234,9 +238,13 @@ test('mock > error > in @On() async', async t => {
   const socket = Socket('http://localhost:8110/mock', {
     path: '/test',
   })
-  const err: ErrorWithStatusCode = await t.throws(p(socket.emit, socket)(':ack.async', 'error'))
-  t.is(err.status, 500)
-  t.is(err.message, 'error')
+  try {
+    const res = await p(socket.emit, socket)(':ack.async', 'error')
+  } catch(e) {
+    const err: ErrorWithStatusCode = e as ErrorWithStatusCode
+    t.is(err.status, 500)
+    t.is(err.message, 'error')
+  }
   socket.close()
 })
 
@@ -244,9 +252,13 @@ test('mock > error > unauthorized 401', async t => {
   const socket = Socket('http://localhost:8110/mock', {
     path: '/test',
   })
-  const err: ErrorWithStatusCode = await t.throws(p(socket.emit, socket)(':auth.level01', 'on'))
-  t.is(err.status, 401)
-  t.is(err.message, 'Unauthorized: denied')
+  try {
+    const res = await p(socket.emit, socket)(':auth.level01', 'on')
+  } catch(e) {
+    const err: ErrorWithStatusCode = e as ErrorWithStatusCode
+    t.is(err.status, 401)
+    t.is(err.message, 'Unauthorized: denied')
+  }
 })
 
 test('mock > error > bad request 400', async t => {
@@ -260,17 +272,25 @@ test('mock > error > bad request 400', async t => {
       },
     },
   })
-  const err: ErrorWithStatusCode = await t.throws(p(socket.emit, socket)(':auth.level01', 'wrong'))
-  t.is(err.message, 'Bad Request: bad query')
-  t.is(err.status, 400)
+  try {
+    const res = await p(socket.emit, socket)(':auth.level01', 'wrong')
+  } catch(e) {
+    const err: ErrorWithStatusCode = e as ErrorWithStatusCode
+    t.is(err.message, 'Bad Request: bad query')
+    t.is(err.status, 400)
+  }
 })
 
 test('mock > error > not found 404', async t => {
   const socket = Socket('http://localhost:8110/mock', {
     path: '/test',
   })
-  const err: ErrorWithStatusCode = await t.throws(p(socket.emit, socket)(':notfound'))
-  t.is(err.status, 404)
-  t.is(err.message, 'Not Found: not found event')
+  try {
+    const res = await p(socket.emit, socket)(':notfound')
+  } catch(e) {
+    const err: ErrorWithStatusCode = e as ErrorWithStatusCode
+    t.is(err.status, 404)
+    t.is(err.message, 'Not Found: not found event')
+  }
   socket.close()
 })
