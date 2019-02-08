@@ -1,6 +1,6 @@
 {
   "name": "ts-socket.io.server",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Typescript + Socket.IO Server",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -47,7 +47,7 @@
     "fourdollar.promisify": "^1.0.6",
     "jsonwebtoken": "^8.4.0",
     "socket.io": "^2.2.0",
-    "socket.io-decorator": "^0.3.3"
+    "socket.io-decorator": "^0.4.1"
   },
   "ava": {
     "files": [
