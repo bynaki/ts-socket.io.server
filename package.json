@@ -1,6 +1,6 @@
 {
   "name": "ts-socket.io.server",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Typescript + Socket.IO Server",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -34,22 +34,22 @@
     "fetch": "curl -o archive.tar.gz \"$RELEASE_URL\" && tar xvfz archive.tar.gz && npm install"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^8.3.0",
-    "@types/node": "^9.6.18",
+    "@types/jsonwebtoken": "^8.3.2",
+    "@types/node": "^11.11.3",
     "@types/socket.io-client": "^1.4.32",
-    "ava": "^1.1.0",
+    "ava": "^1.3.1",
     "glob": "^7.1.3",
     "parcel-bundler": "^1.12.2",
     "socket.io-client": "^2.2.0",
-    "typescript": "^3.2.4"
+    "typescript": "^3.3.3333"
   },
   "dependencies": {
     "fourdollar.filewriter": "^1.0.2",
     "fourdollar.logger": "^1.0.4",
     "fourdollar.promisify": "^1.0.6",
-    "jsonwebtoken": "^8.4.0",
+    "jsonwebtoken": "^8.5.0",
     "socket.io": "^2.2.0",
-    "socket.io-decorator": "^0.4.1"
+    "socket.io-decorator": "^0.4.3"
   },
   "ava": {
     "files": [
