@@ -2,9 +2,7 @@ import {
   On,
   Use,
   OnConnect,
-  OnDisconnect,
   Socket,
-  Middleware,
   SocketWrapper,
   Namespace,
 } from 'socket.io-decorator'
@@ -14,16 +12,12 @@ import {
   ErrorBadRequest
 } from '../errors'
 import {
-  sendingErrorData
-} from '../utils'
-import {
   OnWrapped,
 } from '../wrappers'
 import {
   decodeToken,
   getDecodedToken,
 } from '../middlewares/authentication'
-import cf from '../config'
 import {
   LogSpace,
 } from './log.space'
@@ -77,7 +71,7 @@ function track(socket: Socket, index: string) {
 @Use((socket, next, ctx) => {
   // track
   track(socket, 'use04')
-  decodeToken(cf.jwt)(socket, next, ctx)
+  decodeToken(socket, next, ctx)
 })
 
 @Use((socket, next, ctx) => {

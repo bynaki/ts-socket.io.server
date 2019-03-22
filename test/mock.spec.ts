@@ -9,16 +9,16 @@ import {
   MockSpace,
 } from '../src/namespaces'
 import p from 'fourdollar.promisify'
-import {
-  sign
-} from 'jsonwebtoken'
-import cf from '../src/config'
 import { ErrorWithStatusCode } from '../src/errors';
+import {
+  Authorizer,
+} from 'bynaki.auth'
 
 const io = IO(8110, {
   path: '/test',
 })
 const mock = new MockSpace(io.of('mock'))
+const auth = new Authorizer('./jwtconfig.json')
 
 test.after(() => {
   io.close()
@@ -78,7 +78,7 @@ test.cb('mock > auth > on and off level01', t => {
     transportOptions: {
       polling: {
         extraHeaders: {
-          'x-access-token': sign({permissions: ['level01']}, cf.jwt.secret, cf.jwt.options)
+          'x-access-token': auth.sign({user: 'naki', permissions: ['level01']})
         },
       },
     },
@@ -112,6 +112,12 @@ test.cb('mock > auth > on and off level01', t => {
       })
     }
   })
+  socket.on('error', msg => {
+    console.log(msg)
+    t.fail()
+    socket.close()
+    t.end()
+  })
 })
 
 test.cb('mock > auth > on and off level02', t => {
@@ -120,7 +126,7 @@ test.cb('mock > auth > on and off level02', t => {
     transportOptions: {
       polling: {
         extraHeaders: {
-          'x-access-token': sign({permissions: ['level02']}, cf.jwt.secret, cf.jwt.options)
+          'x-access-token': auth.sign({user: 'naki', permissions: ['level02']})
         },
       },
     },
@@ -129,6 +135,8 @@ test.cb('mock > auth > on and off level02', t => {
     if(err) {
       console.log(err.message)
       t.fail()
+      socket.close()
+      t.end()
     } else {
       t.is(msg, 'ok')
       const level01Room = mock.namespace.in('level01')
@@ -140,6 +148,8 @@ test.cb('mock > auth > on and off level02', t => {
     if(err) {
       console.log(err.message)
       t.fail()
+      socket.close()
+      t.end()
     } else {
       t.is(msg, 'ok')
       const level02Room = mock.namespace.in('level02')
@@ -155,6 +165,8 @@ test.cb('mock > auth > on and off level02', t => {
       if(err) {
         console.log(err.message)
         t.fail()
+        socket.close()
+        t.end()
       } else {
         t.is(msg, 'ok')
         const level01Room = mock.namespace.in('level01')
@@ -173,6 +185,8 @@ test.cb('mock > auth > on and off level02', t => {
       if(err) {
         console.log(err.message)
         t.fail()
+        socket.close()
+        t.end()
       } else {
         t.is(msg, 'ok')
         const level02Room = mock.namespace.in('level02')
@@ -184,6 +198,12 @@ test.cb('mock > auth > on and off level02', t => {
         }
       }
     })
+  })
+  socket.on('error', msg => {
+    console.log(msg)
+    t.fail()
+    socket.close()
+    t.end()
   })
 })
 
@@ -267,7 +287,7 @@ test('mock > error > bad request 400', async t => {
     transportOptions: {
       polling: {
         extraHeaders: {
-          'x-access-token': sign({permissions: ['level01']}, cf.jwt.secret, cf.jwt.options)
+          'x-access-token': auth.sign({user: 'naki', permissions: ['level01']}),
         },
       },
     },
