@@ -18,7 +18,7 @@ const io = IO(8110, {
   path: '/test',
 })
 const mock = new MockSpace(io.of('mock'))
-const auth = new Authorizer('./jwtconfig.json')
+const auth = new Authorizer('./jwtconfig.base.json')
 
 test.after(() => {
   io.close()
@@ -35,8 +35,8 @@ test.cb('mock > namespace is /mock', t => {
   socket.on('message', msg => {
     t.is(connected, true)
     t.is(msg, 'Hello in mock')
-    t.end()
     socket.close()
+    t.end()
   })
 })
 
@@ -86,9 +86,8 @@ test.cb('mock > auth > on and off level01', t => {
   socket.emit(':auth.level01', 'on', async (err: Error, msg: string) => {
     if(err) {
       console.log(err.message)
-      t.fail()
       socket.close()
-      t.end()
+      t.fail()
     } else {
       t.is(msg, 'ok')
       const level01Room = mock.namespace.in('level01')
@@ -114,8 +113,8 @@ test.cb('mock > auth > on and off level01', t => {
   })
   socket.on('error', msg => {
     console.log(msg)
-    t.fail()
     socket.close()
+    t.fail()
     t.end()
   })
 })
@@ -134,7 +133,6 @@ test.cb('mock > auth > on and off level02', t => {
   socket.emit(':auth.level01', 'on', async (err: Error, msg: string) => {
     if(err) {
       console.log(err.message)
-      t.fail()
       socket.close()
       t.end()
     } else {
@@ -147,8 +145,8 @@ test.cb('mock > auth > on and off level02', t => {
   socket.emit(':auth.level02', 'on', async (err: Error, msg: string) => {
     if(err) {
       console.log(err.message)
-      t.fail()
       socket.close()
+      t.fail()
       t.end()
     } else {
       t.is(msg, 'ok')
@@ -164,8 +162,8 @@ test.cb('mock > auth > on and off level02', t => {
     socket.emit(':auth.level01', 'off', async (err: Error, msg: string) => {
       if(err) {
         console.log(err.message)
-        t.fail()
         socket.close()
+        t.fail()
         t.end()
       } else {
         t.is(msg, 'ok')
@@ -184,8 +182,8 @@ test.cb('mock > auth > on and off level02', t => {
     socket.emit(':auth.level02', 'off', async (err: Error, msg: string) => {
       if(err) {
         console.log(err.message)
-        t.fail()
         socket.close()
+        t.fail()
         t.end()
       } else {
         t.is(msg, 'ok')
@@ -201,8 +199,8 @@ test.cb('mock > auth > on and off level02', t => {
   })
   socket.on('error', msg => {
     console.log(msg)
-    t.fail()
     socket.close()
+    t.fail()
     t.end()
   })
 })
@@ -281,7 +279,7 @@ test('mock > error > unauthorized 401', async t => {
   }
 })
 
-test('mock > error > bad request 400', async t => {
+test.cb('mock > error > bad request 400', t => {
   const socket = Socket('http://localhost:8110/mock', {
     path: '/test',
     transportOptions: {
@@ -292,13 +290,22 @@ test('mock > error > bad request 400', async t => {
       },
     },
   })
-  try {
-    const res = await p(socket.emit, socket)(':auth.level01', 'wrong')
-  } catch(e) {
-    const err: ErrorWithStatusCode = e as ErrorWithStatusCode
-    t.is(err.message, 'Bad Request: bad query')
-    t.is(err.status, 400)
-  }
+  socket.emit(':auth.level01', 'wrong', (err: ErrorWithStatusCode, msg: string) => {
+    socket.close()
+    if(err) {
+      t.is(err.message, 'Bad Request: bad query')
+      t.is(err.status, 400)
+    } else {
+      t.fail()
+    }
+    t.end()
+  })
+  socket.on('error', msg => {
+    console.log(msg)
+    socket.close()
+    t.fail()
+    t.end()
+  })
 })
 
 test('mock > error > not found 404', async t => {
